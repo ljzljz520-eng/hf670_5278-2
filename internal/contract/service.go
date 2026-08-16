@@ -68,14 +68,12 @@ func (s *Service) Process(id string, files []FileInput) (Application, error) {
 
 func (s *Service) processFiles(files []FileInput) []CloseRecord {
 	records := make([]CloseRecord, len(files))
-	var current Resource
 	for index, file := range files {
-		current = s.factory.Open(file)
-		defer func(holder *Resource, position int) {
-			resource := *holder
+		resource := s.factory.Open(file)
+		defer func(resource Resource, position int) {
 			_ = resource.Close()
 			records[position] = CloseRecord{FileName: resource.FileName(), ResourceID: resource.ID()}
-		}(&current, index)
+		}(resource, index)
 	}
 	return records
 }
