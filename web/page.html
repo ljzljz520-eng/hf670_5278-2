@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>合同用印流程</title>
+  <style>
+    :root { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #1f2937; background: #f3f4f6; }
+    body { max-width: 760px; margin: 0 auto; padding: 32px 16px; }
+    main { background: white; padding: 28px; border: 1px solid #d1d5db; border-radius: 8px; }
+    h1 { margin-top: 0; font-size: 24px; }
+    label { display: block; margin-top: 16px; font-size: 14px; font-weight: 600; }
+    input, select, button { box-sizing: border-box; width: 100%; margin-top: 6px; padding: 10px; border: 1px solid #9ca3af; border-radius: 4px; font: inherit; }
+    button { margin-top: 24px; color: white; background: #1d4ed8; border-color: #1d4ed8; cursor: pointer; }
+    pre { white-space: pre-wrap; background: #f9fafb; padding: 12px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>合同用印申请</h1>
+    <form id="seal-form">
+      <label>合同名称<input name="contractName" required></label>
+      <label>申请部门<input name="department" required></label>
+      <label>用印类型<select name="sealType"><option value="official">公章</option><option value="finance">财务章</option><option value="contract">合同章</option></select></label>
+      <label>紧急程度<select name="urgency"><option value="normal">普通</option><option value="urgent">紧急</option></select></label>
+      <button type="submit">提交申请</button>
+    </form>
+    <pre id="result">等待提交</pre>
+  </main>
+  <script>
+    document.querySelector('#seal-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const body = Object.fromEntries(new FormData(event.currentTarget));
+      const response = await fetch('/api/contract-seals', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      document.querySelector('#result').textContent = JSON.stringify(await response.json(), null, 2);
+    });
+  </script>
+</body>
+</html>
